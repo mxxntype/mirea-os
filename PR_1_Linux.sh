@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
-NAME="Artem"
 SURNAME="Vartanyan"
+NAME="Artem"
 FNAME="Aleksandrovich"
 GROUP="BSBO_01_22"
 
@@ -51,7 +51,7 @@ mv ${NAME}_2 Октябрь
 mv ${NAME}_3 Ноябрь
 cd ..
 
-rm -rf $SURNAME
+rm -rf $SURNAME/*
 $LS
 $0 --clean
 $LS
