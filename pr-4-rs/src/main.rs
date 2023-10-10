@@ -107,7 +107,6 @@ async fn batch_threads(
         join_handles.push(handle);
     }
 
-    // Присоединение потоков B, C, I
     for handle in join_handles {
         handle.await?;
     }
