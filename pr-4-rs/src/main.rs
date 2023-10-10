@@ -5,7 +5,9 @@ use tokio::sync::Semaphore;
 
 /// Максимальное количество одновременных доступов к семафоре
 const MAX_PERMIT_COUNT: usize = 4;
+/// Интервал между созданием новых потоков
 const THREAD_SPAWN_INTERVAL: u64 = 25;
+/// Время работы одного потока
 const THREAD_LIFETIME: u64 = 75;
 
 /// Вариант #2
