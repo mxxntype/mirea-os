@@ -5,6 +5,8 @@ use tokio::sync::Semaphore;
 
 /// Максимальное количество одновременных доступов к семафоре
 const MAX_PERMIT_COUNT: usize = 4;
+const THREAD_SPAWN_INTERVAL: u64 = 25;
+const THREAD_LIFETIME: u64 = 75;
 
 /// Вариант #2
 #[tokio::main]
@@ -15,19 +17,23 @@ async fn main() -> Result<()> {
     let mut point_count: usize = 0;
 
     // Создание и присоединения потока A
-    create_worker_thread("A".bold().blue(), Arc::clone(&semaphore), 50).await?;
+    create_worker_thread("A".bold().blue(), Arc::clone(&semaphore), THREAD_LIFETIME).await?;
 
     print_current_point(&mut point_count);
 
     // Создание потока J
-    let thread_j = create_worker_thread("J".bold().magenta(), Arc::clone(&semaphore), 450);
+    let thread_j = create_worker_thread(
+        "J".bold().magenta(),
+        Arc::clone(&semaphore),
+        9 * THREAD_SPAWN_INTERVAL + 3 * THREAD_LIFETIME,
+    );
 
     // Создание и присоединения потоков B, C, I
     batch_threads(
         vec!["B".bold().red(), "C".bold().yellow(), "I".bold().green()],
         &semaphore,
-        25,
-        75,
+        THREAD_SPAWN_INTERVAL,
+        THREAD_LIFETIME,
     )
     .await?;
     print_current_point(&mut point_count);
@@ -36,8 +42,8 @@ async fn main() -> Result<()> {
     batch_threads(
         vec!["D".bold().blue(), "E".bold().cyan(), "F".bold().magenta()],
         &semaphore,
-        25,
-        75,
+        THREAD_SPAWN_INTERVAL,
+        THREAD_LIFETIME,
     )
     .await?;
     print_current_point(&mut point_count);
@@ -46,8 +52,8 @@ async fn main() -> Result<()> {
     batch_threads(
         vec!["G".bold().red(), "H".bold().yellow()],
         &semaphore,
-        25,
-        75,
+        THREAD_SPAWN_INTERVAL,
+        THREAD_LIFETIME,
     )
     .await?;
 
