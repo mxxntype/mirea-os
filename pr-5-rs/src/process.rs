@@ -1,8 +1,8 @@
 use rand::{self, Rng};
 
-use crate::ram::Page;
+use crate::page::Page;
 
-const PROCESS_SIZE: usize = 32;
+pub const PROCESS_SIZE: usize = 32;
 
 #[allow(dead_code)]
 #[derive(Debug)]
@@ -23,12 +23,14 @@ impl Process {
         }
     }
 
-    pub fn write_to_page(self, page: &Page) {
+    pub fn write_to_page(self, page: &Page, offset: usize) {
         for i in 0..PROCESS_SIZE {
-            page.bytes[i].try_borrow_mut().map_or_else(
-                |_| eprintln!(".borrow_mut() failed on byte {i}"),
-                |mut byte_addr| *byte_addr = self.instructions[i],
-            );
+            page.bytes[i + offset * PROCESS_SIZE]
+                .try_borrow_mut()
+                .map_or_else(
+                    |_| eprintln!(".borrow_mut() failed on byte {i}"),
+                    |mut byte_addr| *byte_addr = self.instructions[i],
+                );
         }
     }
 }

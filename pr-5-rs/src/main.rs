@@ -1,25 +1,24 @@
 use color_eyre::Result;
 use std::rc::Rc;
 
-use crate::{
-    process::Process,
-    ram::{Page, Ram},
-};
-
+mod page;
 mod process;
 mod ram;
-mod swap;
+
+use crate::{page::Page, process::Process, ram::Ram};
 
 fn main() -> Result<()> {
     color_eyre::install()?;
 
     let ram = Rc::new(Ram::new());
-    let page_0 = Page::new(0, &ram);
+    let page = Page::new(0, &ram);
 
-    let process = Process::new();
-    process.write_to_page(&page_0);
+    for i in 0..page::PAGE_SIZE / process::PROCESS_SIZE {
+        let process = Process::new();
+        process.write_to_page(&page, i);
+    }
 
-    println!("{page_0}");
+    println!("{page}");
 
     Ok(())
 }
