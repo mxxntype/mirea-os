@@ -1,6 +1,5 @@
-use std::cell::RefCell;
-
 use crate::page::{PAGE_COUNT, PAGE_SIZE};
+use std::cell::RefCell;
 
 pub const RAM_SIZE: usize = PAGE_SIZE * PAGE_COUNT;
 
@@ -8,7 +7,7 @@ pub const RAM_SIZE: usize = PAGE_SIZE * PAGE_COUNT;
 #[allow(dead_code)]
 #[derive(Debug)]
 pub struct Ram {
-    pub bytes: RefCell<[u8; RAM_SIZE]>,
+    pub(crate) bytes: RefCell<[u8; RAM_SIZE]>,
 }
 
 impl Ram {

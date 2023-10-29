@@ -1,24 +1,25 @@
-use color_eyre::Result;
-use std::rc::Rc;
-
 mod page;
 mod process;
 mod ram;
 
 use crate::{page::Page, process::Process, ram::Ram};
+use color_eyre::Result;
+use std::rc::Rc;
 
 fn main() -> Result<()> {
     color_eyre::install()?;
 
     let ram = Rc::new(Ram::new());
-    let page = Page::new(0, &ram);
+    let mut page = Page::new(0, &ram);
 
-    for i in 0..page::PAGE_SIZE / process::PROCESS_SIZE {
+    for _ in 0..5 {
         let process = Process::new();
-        process.write_to_page(&page, i);
+        let pid = process.pid;
+        println!("Loading process with PID {pid}...");
+        page.load_proccess(&process)?;
+        page.unload_process(pid)?;
+        println!("{process}");
     }
-
-    println!("{page}");
 
     Ok(())
 }

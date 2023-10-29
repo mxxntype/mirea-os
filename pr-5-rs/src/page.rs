@@ -1,17 +1,18 @@
-use colored::Colorize;
-use std::{cell::RefCell, fmt, rc::Rc};
-
 use crate::ram::Ram;
+use colored::Colorize;
+use std::{cell::RefCell, collections::HashMap, fmt, rc::Rc};
 
 pub const PAGE_DIM: usize = 16;
 pub const PAGE_SIZE: usize = PAGE_DIM.pow(2);
 pub const PAGE_COUNT: usize = 2;
 
 /// RAM page model. Holds references to bytes owned by RAM.
-#[allow(dead_code)]
+#[allow(unused)]
 #[derive(Debug)]
 pub struct Page {
-    pub bytes: Rc<[RefCell<u8>; PAGE_SIZE]>,
+    pub(crate) bytes: Rc<[RefCell<u8>; PAGE_SIZE]>,
+    pub(crate) loaded_processes: usize,
+    pub(crate) map: HashMap<u16, usize>,
 }
 
 impl Page {
@@ -24,12 +25,17 @@ impl Page {
             .map(RefCell::new)
             .collect::<Vec<_>>();
         let bytes = Rc::new(bytes.try_into().unwrap());
-        Self { bytes }
+        Self {
+            bytes,
+            loaded_processes: 0,
+            map: HashMap::new(),
+        }
     }
 }
 
 impl fmt::Display for Page {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        write!(f, "- RAM Page")?;
         for (i, byte) in self.bytes.iter().enumerate() {
             if i % PAGE_DIM == 0 {
                 writeln!(f)?;
