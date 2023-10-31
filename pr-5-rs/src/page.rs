@@ -4,9 +4,9 @@ use std::{cell::RefCell, collections::HashMap, fmt, rc::Rc};
 
 pub const PAGE_DIM: usize = 16;
 pub const PAGE_SIZE: usize = PAGE_DIM.pow(2);
-pub const PAGE_COUNT: usize = 2;
+pub const MAX_PAGE_COUNT: usize = 2;
 
-/// RAM page model. Holds references to bytes owned by RAM.
+/// RAM page model. Holds references to bytes owned by [`Ram`].
 #[allow(unused)]
 #[derive(Debug)]
 pub struct Page {
