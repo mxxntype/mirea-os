@@ -96,10 +96,10 @@ mod tests {
 
     #[test]
     fn load_unload_match() -> Result<()> {
+        const PID2: u16 = 123;
         let ram = Rc::new(Ram::new());
         let mut page = Page::new(0, &ram);
         let first_process = Process::new();
-        const PID2: u16 = 123;
         let second_process = Process::with_pid(PID2);
         page.load_process(&first_process)?;
         page.load_process(&second_process)?;
