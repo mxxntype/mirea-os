@@ -22,7 +22,7 @@ fn main() -> Result<()> {
 
         let mut rng = rand::thread_rng();
         let process_count: usize = rng.gen_range(0..PAGE_SIZE / PROCESS_SIZE);
-        println!("Loading {process_count} processes into RAM...");
+        println!("Загрузка {process_count} процессов в RAM...");
         for _ in 0..process_count {
             let process = Process::with_pid(rng.gen());
             println!("{process}");

@@ -34,7 +34,7 @@ impl fmt::Display for Process {
     #[allow(dead_code)]
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         writeln!(f)?;
-        write!(f, "{}", format!("\tProcess PID {}:", self.pid).bold())?;
+        write!(f, "{}", format!("\tПроцесс с PID {}:", self.pid).bold())?;
         for (i, byte) in self.instructions.iter().enumerate() {
             if i % (PROCESS_SIZE / 2) == 0 {
                 writeln!(f)?;

@@ -74,7 +74,7 @@ impl Page {
 
 impl fmt::Display for Page {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        write!(f, "- RAM Page")?;
+        write!(f, "\n- RAM Страница")?;
         for (i, byte) in self.bytes.iter().enumerate() {
             if i % PAGE_DIM == 0 {
                 writeln!(f)?;
@@ -85,6 +85,7 @@ impl fmt::Display for Page {
             }
             write!(f, "{tmp} ")?;
         }
+        writeln!(f)?;
         Ok(())
     }
 }
