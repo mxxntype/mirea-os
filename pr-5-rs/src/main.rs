@@ -16,7 +16,6 @@ fn main() -> Result<()> {
         let process = Process::new();
         let pid = process.pid;
         page.load_proccess(&process)?;
-        eprintln!("\nCurrent RAM usage: {}%", ram.usage() * 100_f64);
         page.unload_process(pid)?;
         println!("{process}");
     }
