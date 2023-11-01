@@ -15,6 +15,7 @@ pub struct Page {
     pub(crate) bytes: Rc<[RefCell<u8>; PAGE_SIZE]>,
     pub(crate) loaded_processes: usize,
     pub(crate) map: HashMap<u16, usize>,
+    pub(crate) id: usize,
 }
 
 impl Page {
@@ -31,6 +32,7 @@ impl Page {
             bytes,
             loaded_processes: 0,
             map: HashMap::new(),
+            id: usize::default(),
         }
     }
 
@@ -74,18 +76,25 @@ impl Page {
 
 impl fmt::Display for Page {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        write!(f, "\n- RAM Страница")?;
+        write!(
+            f,
+            "\n\t┌── RAM Страница №{} ──────────────────────────────┐",
+            self.id
+        )?;
         for (i, byte) in self.bytes.iter().enumerate() {
             if i % PAGE_DIM == 0 {
-                writeln!(f)?;
+                write!(f, "\n\t│ ")?;
             }
             let mut tmp = format!("{:02x}", *byte.borrow()).bold().bright_black();
             if *byte.borrow() != 0 {
                 tmp = tmp.blue();
             }
             write!(f, "{tmp} ")?;
+            if i % PAGE_DIM == PAGE_DIM - 1 {
+                write!(f, "│")?;
+            }
         }
-        writeln!(f)?;
+        writeln!(f, "\n\t└─────────────────────────────────────────────────┘")?;
         Ok(())
     }
 }
@@ -102,7 +111,7 @@ mod tests {
     #[test]
     fn load_unload_match() -> Result<()> {
         const PID2: u16 = 123;
-        let ram = Rc::new(Ram::new());
+        let ram = Rc::new(Ram::default());
         let mut page = Page::new(0, &ram);
         let first_process = Process::new();
         let second_process = Process::with_pid(PID2);
@@ -119,7 +128,7 @@ mod tests {
     #[test]
     #[should_panic]
     fn incorrect_unload() {
-        let ram = Rc::new(Ram::new());
+        let ram = Rc::new(Ram::default());
         let mut page = Page::new(0, &ram);
         let _ = page.unload_process(321).unwrap();
     }

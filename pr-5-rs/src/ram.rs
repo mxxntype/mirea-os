@@ -10,10 +10,9 @@ pub struct Ram {
     pub(crate) bytes: RefCell<[u8; RAM_SIZE]>,
 }
 
-impl Ram {
-    /// Creates a new RAM object.
-    #[must_use]
-    pub const fn new() -> Self {
+impl Default for Ram {
+    /// Creates a default [`Ram`] object.
+    fn default() -> Self {
         Self {
             bytes: RefCell::new([0; RAM_SIZE]),
         }

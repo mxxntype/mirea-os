@@ -34,14 +34,22 @@ impl fmt::Display for Process {
     #[allow(dead_code)]
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         writeln!(f)?;
-        write!(f, "{}", format!("\tПроцесс с PID {}:", self.pid).bold())?;
+        write!(
+            f,
+            "\t┌── Процесс с PID {:5} ──────────────────────────┐",
+            self.pid
+        )?;
         for (i, byte) in self.instructions.iter().enumerate() {
             if i % (PROCESS_SIZE / 2) == 0 {
-                writeln!(f)?;
+                write!(f, "\n\t│ ")?;
             }
             let formatted_byte = format!("{byte:02x}").red();
             write!(f, "{formatted_byte} ")?;
+            if i % (PROCESS_SIZE / 2) == (PROCESS_SIZE / 2) - 1 {
+                write!(f, "│")?;
+            }
         }
+        writeln!(f, "\n\t└─────────────────────────────────────────────────┘")?;
         Ok(())
     }
 }

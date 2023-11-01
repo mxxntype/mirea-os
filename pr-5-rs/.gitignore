@@ -1,3 +1,6 @@
 target/
 *.out
+*.md
+*.pdf
+assets/
 main.c
