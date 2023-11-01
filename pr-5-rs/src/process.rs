@@ -35,7 +35,7 @@ impl Process {
 impl Page {
     /// Load a [`Process`] into memory.
     #[allow(dead_code)]
-    pub fn load_proccess(&mut self, process: &Process) -> Result<()> {
+    pub fn load_process(&mut self, process: &Process) -> Result<()> {
         eyre::ensure!(
             self.loaded_processes < crate::page::PAGE_SIZE / PROCESS_SIZE,
             "Not enough space in page to write another process"
@@ -84,5 +84,38 @@ impl fmt::Display for Process {
             write!(f, "{formatted_byte} ")?;
         }
         Ok(())
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::Process;
+    use crate::{page::Page, ram::Ram};
+    use color_eyre::Result;
+    use std::rc::Rc;
+
+    #[test]
+    fn load_unload_match() -> Result<()> {
+        let ram = Rc::new(Ram::new());
+        let mut page = Page::new(0, &ram);
+        let first_process = Process::new();
+        const PID2: u16 = 123;
+        let second_process = Process::with_pid(PID2);
+        page.load_process(&first_process)?;
+        page.load_process(&second_process)?;
+        assert_eq!(
+            first_process.pid,
+            page.unload_process(first_process.pid)?.pid
+        );
+        assert_eq!(PID2, page.unload_process(PID2)?.pid);
+        Ok(())
+    }
+
+    #[test]
+    #[should_panic]
+    fn incorrect_unload() {
+        let ram = Rc::new(Ram::new());
+        let mut page = Page::new(0, &ram);
+        let _ = page.unload_process(321).unwrap();
     }
 }

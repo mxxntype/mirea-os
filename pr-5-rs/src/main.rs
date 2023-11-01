@@ -15,7 +15,7 @@ fn main() -> Result<()> {
     for _ in 0..5 {
         let process = Process::new();
         let pid = process.pid;
-        page.load_proccess(&process)?;
+        page.load_process(&process)?;
         page.unload_process(pid)?;
         println!("{process}");
     }
