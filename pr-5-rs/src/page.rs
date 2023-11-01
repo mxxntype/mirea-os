@@ -40,7 +40,7 @@ impl fmt::Display for Page {
             if i % PAGE_DIM == 0 {
                 writeln!(f)?;
             }
-            let mut tmp = format!("{:02X}", *byte.borrow()).bold().bright_black();
+            let mut tmp = format!("{:02x}", *byte.borrow()).bold().bright_black();
             if *byte.borrow() != 0 {
                 tmp = tmp.blue();
             }
