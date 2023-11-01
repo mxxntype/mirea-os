@@ -1,3 +1,4 @@
+mod file;
 mod page;
 mod process;
 mod ram;
@@ -8,6 +9,7 @@ use crate::{
     ram::Ram,
 };
 use color_eyre::Result;
+use file::{File, Filesystem};
 use page::MAX_PAGE_COUNT;
 use rand::Rng;
 use std::rc::Rc;
@@ -15,29 +17,43 @@ use std::rc::Rc;
 fn main() -> Result<()> {
     color_eyre::install()?;
 
-    let ram = Rc::new(Ram::default());
-    let mut pages: Vec<Page> = vec![];
-    for i in 0..MAX_PAGE_COUNT {
-        pages.push(Page::new(i, &ram));
-        pages[i].id = i + 1;
+    #[cfg(feature = "ram")]
+    {
+        let ram = Rc::new(Ram::default());
+        let mut pages: Vec<Page> = vec![];
+        for i in 0..MAX_PAGE_COUNT {
+            pages.push(Page::new(i, &ram));
+            pages[i].id = i + 1;
 
-        let mut rng = rand::thread_rng();
-        let process_count: usize = rng.gen_range(1..PAGE_SIZE / PROCESS_SIZE);
-        println!(
-            "\t\tЗагрузка {process_count} процессов в RAM на страницу №{}...",
-            pages[i].id
-        );
-        for _ in 0..process_count {
-            let process = Process::with_pid(rng.gen());
-            println!("{process}");
-            pages[i].load_process(&process)?;
+            let mut rng = rand::thread_rng();
+            let process_count: usize = rng.gen_range(1..PAGE_SIZE / PROCESS_SIZE);
             println!(
-                "\t\tПроцессов в оперативной памяти: {}",
-                pages.iter().map(|p| p.loaded_processes).sum::<usize>()
+                "\t\tЗагрузка {process_count} процессов в RAM на страницу №{}...",
+                pages[i].id
             );
+            for _ in 0..process_count {
+                let process = Process::with_pid(rng.gen());
+                println!("{process}");
+                pages[i].load_process(&process)?;
+                println!(
+                    "\t\tПроцессов в оперативной памяти: {}",
+                    pages.iter().map(|p| p.loaded_processes).sum::<usize>()
+                );
+            }
+            println!("{}", pages[i]);
         }
+    }
 
-        println!("{}", pages[i]);
+    // #[cfg(feature = "fs")]
+    {
+        let mut fs = Filesystem::default();
+        let mut file = File::default();
+        file.reserve(4);
+        file.rename(&"main.rs");
+        file.show_blocks();
+        fs.add_file(&file);
+        println!("FS uses {} Bytes", fs.usage());
+        // dbg!(fs);
     }
 
     Ok(())
