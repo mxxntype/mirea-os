@@ -8,11 +8,11 @@ use crate::{
     process::{Process, PROCESS_SIZE},
     ram::Ram,
 };
-use color_eyre::Result;
+use color_eyre::{owo_colors::OwoColorize, Result};
 use file::{File, Filesystem};
 use page::MAX_PAGE_COUNT;
 use rand::Rng;
-use std::rc::Rc;
+use std::{fmt::Display, rc::Rc};
 
 fn main() -> Result<()> {
     color_eyre::install()?;
@@ -44,17 +44,36 @@ fn main() -> Result<()> {
         }
     }
 
-    // #[cfg(feature = "fs")]
+    #[cfg(feature = "fs")]
     {
+        const DISPLAY_BLOCK_COUNT: usize = 2;
+
+        status_message(&"Создание файловой системы...");
         let mut fs = Filesystem::default();
+
+        status_message(&"Создание файла...");
         let mut file = File::default();
-        file.reserve(4);
+
+        status_message(&"Переименование файла в main.rs...");
         file.rename(&"main.rs");
+
+        status_message(&format!(
+            "Резервирование {DISPLAY_BLOCK_COUNT} блоков для файла {}...",
+            file.name
+        ));
+        file.reserve(DISPLAY_BLOCK_COUNT);
+
         file.show_blocks();
+        file.reserve(64 * 1024 / 512 - DISPLAY_BLOCK_COUNT);
         fs.add_file(&file);
-        println!("FS uses {} Bytes", fs.usage());
-        // dbg!(fs);
+
+        status_message(&format!("Резервирование 64КБ для файла {}...", file.name));
+        status_message(&format!("Файловая система использует {} байт.", fs.usage()));
     }
 
     Ok(())
+}
+
+fn status_message(msg: &(impl Display + Clone)) {
+    println!("\t\t{}", msg.clone().italic());
 }

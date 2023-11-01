@@ -65,10 +65,7 @@ impl File {
     }
 
     pub fn show_blocks(&self) {
-        println!(
-            "\n\t\tShowing blocks of File '{}'\n",
-            self.name.bold().purple()
-        );
+        println!("\n\t\tБлоки файла '{}':\n", self.name.bold().purple());
         self.blocks.iter().for_each(|b| println!("{b}"));
     }
 }
