@@ -4,3 +4,4 @@ target/
 *.pdf
 assets/
 main.c
+.clang-format
