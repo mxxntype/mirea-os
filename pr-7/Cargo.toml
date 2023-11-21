@@ -1,0 +1,6 @@
+[workspace]
+resolver = "2"
+members = [
+  "pr-7-sync",
+  "pr-7-queue"
+]
